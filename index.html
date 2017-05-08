@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>   
+    <meta charset="utf-8">
+    <title>BeerFest</title>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!--CSS and Icon-->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" href="img/favicon.ico">
+    <!--Font Families-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+</head>
+<body>
+    
+    <header id="header">
+        <div class="nav-main">
+            <h1>BeerFest</h1>
+        </div><!--.nav-main-->
+    </header><!--#header-->
+    
+    
+    <div id="button">
+        <div class="btnFind">Locations</div>
+    </div><!--#button-->
+
+    <div class="poplist-wrapper">
+        <div class="poplist">
+            <div class="listitem btnKeg"><span>Keg Town</span></div>
+            <div class="listitem btnCraft"><span>Craft Bar</span></div>
+            <div class="listitem btnBeer"><span>Beer Street</span></div>
+            <div class="listitem btnClose"><span>Cancel</span></div>
+        </div>
+    </div>
+    <div id="map"></div>
+
+    <div id="splashscreen">
+        <div class="centerthisdiv">
+            <img id="splashlogo" src="img/BeerFest_icon-01.png" />
+            <h1>BeerFest</h1>
+            <p>Please drink responsibly.</p>
+        </div>
+    </div>
+
+    <!--Bootstrap-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/script.js"></script>
+
+    <!--Javascript-->
+    <script>
+        //setting a function to have the spashscreen div fade out over 3 seconds
+        setTimeout(function () {
+            //jquery to cause div with the id #splashscreen to fade out
+            $("#splashscreen").fadeOut();
+        //time set for 3 seconds
+        }, 3000);
+        //function that google maps api finds and runs inside of when the google maps is ready and loaded
+        function initMap() {
+            //set locations in the google map latitude and longitude and identify them
+            var locations = {
+                //location of the craft bar
+                craftLocation: {
+                    lat: 43.6311592,
+                    lng: -79.4229053,
+                },
+                //location of keg town
+                kegLocation: {
+                    lat: 43.631223,
+                    lng: -79.423698
+                },
+                //location of beer street
+                beerLocation: {
+                    lat: 43.631487,
+                    lng: -79.422376
+                },
+                //location of user (faked for visibility of prototype)
+                userLocation: {
+                    lat: 43.631331,
+                    lng: -79.421950
+                } 
+            }
+            //loads the google map and tells it where to center the view and what level of zoom to use
+            var map = new google.maps.Map(document.getElementById('map'), {
+                //sets the zoom level
+                zoom: 18,
+                //centers the view on given coordinates
+                center: { lat: 43.630777, lng: -79.422839 }
+            });
+            //creates a map marker on the google map for the Craft bar
+            var craftMarker = new google.maps.Marker({
+                //sets the title property of the var
+                title: "Craft Bar",
+                //sets the position property of the var to reference the location var
+                position: locations.craftLocation,
+                //identifies what map the var will be placed on
+                map: map
+            });
+            //creates a map marker on the google map for beer street
+            var beerMarker = new google.maps.Marker({
+                //sets the title property of the var
+                title: "Beer Street",
+                //sets the position property of the var to reference the location var
+                position: locations.beerLocation,
+                //identifies what map the var will be placed on
+                map: map
+            });
+            //creates a map marker on the google map for keg town
+            var kegMarker = new google.maps.Marker({
+                //sets the title property of the var
+                title: "Keg Town",
+                //sets the position property of the var to reference the location var
+                position: locations.kegLocation,
+                //identifies what map the var will be placed on
+                map: map
+            });
+            //creates a map marker on the google map for the User
+            var userMarker = new google.maps.Marker({
+                //sets the title property of the var
+                position: locations.userLocation,
+                //identifies what map the var will be placed on
+                map: map,
+                //changes the marker from the default google pin, to a specified image
+                icon: '../img/userpin.png'
+            });
+            //adds a function to the poplist buttons which opens an info window containing a link and title
+            function getInfoWindow(title, url) {
+                return new google.maps.InfoWindow({
+                    //allows the function to generate the title and url based on the marker vars
+                    content: "<a href='" + url + " '><h3>" + title + "</h3></a>"
+                });
+            }
+            //on click function to open the pop up list with the 'BeerFest Locations' button
+            $('.btnFind').click(function () {
+                //opens the pop up list after button press
+                $('.poplist-wrapper').addClass('active');
+            });
+            //on click function to close the pop up list with the 'close' button
+            $('.btnClose').click(function () {
+                //closes the pop up list after button press
+                $('.poplist-wrapper').removeClass('active');
+            });
+            //on click function to go to the 'Beer Street' map marker with the 'Beer Street' button
+            $('.btnBeer').click(function () {
+                //closes the pop up list after button press
+                $('.poplist-wrapper').removeClass('active');
+                //shifts the view of the map to focus on the position of the 'Beer Street' map marker
+                map.panTo(beerMarker.getPosition());
+                //creates an infoWindow object which is filled by the passed parameters of "title" and "url" to be bound to a map marker
+                getInfoWindow("Beer Street", "beerstreet.html").open(map, beerMarker);
+            });
+            //on click function to go to the 'Keg Town' map marker with the 'Keg Town' button
+            $('.btnKeg').click(function () {
+                //closes the pop up list after button press
+                $('.poplist-wrapper').removeClass('active');
+                //shifts the view of the map to focus on the position of the 'Keg Town' map marker
+                map.panTo(kegMarker.getPosition());
+                //creates an infoWindow object which is filled by the passed parameters of "title" and "url" to be bound to a map marker
+                getInfoWindow("Keg Town", "kegtown.html").open(map, kegMarker);
+            });
+            //on click function to go to the 'Craft Bar' map marker with the 'Craft Bar' button
+            $('.btnCraft').click(function () {
+                //closes the pop up list after button press
+                $('.poplist-wrapper').removeClass('active');
+                //shifts the view of the map to focus on the position of the 'Craft Bar' map marker
+                map.panTo(craftMarker.getPosition());
+                //creates an infoWindow object which is filled by the passed parameters of "title" and "url" to be bound to a map marker
+                getInfoWindow("Craft Bar", "craftbeers.html").open(map, craftMarker);
+            });
+        }
+        
+
+    </script>
+    <!--Loads the Google Map API script-->
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz-2T5KK2ej9_btDhNoMcFCedXIaBVKNc&callback=initMap">
+    </script>
+
+</body>
+</html>
